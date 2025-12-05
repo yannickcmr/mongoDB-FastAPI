@@ -1,0 +1,115 @@
+""" Controller API for communication throughout the application """
+
+from fastapi import APIRouter
+
+from app.config.logging_config import create_logger
+from app.validation.messages import DataResponse, ErrorResponse
+from app.validation.messages import DBGetUser, DBAddUser, DBDeleteUser
+from app.model.database import DBUsers
+
+
+""" Logging Function """
+
+Logger = create_logger()
+Logger.info("=> Logging initialized.")
+
+
+""" API """
+
+router = APIRouter(tags=['database'])
+
+@router.post("/get_user", response_model=DataResponse)
+async def get_user(data: DBGetUser, log_lvl = "info") -> DataResponse:
+    """ Endpoint for gathering User data from the DB.
+
+    Args:
+        data (DBGetUser): User Identifiers such as 'userID', 'email', etc.
+        log_lvl (str, optional): Logger level. Defaults to "info".
+
+    Returns:
+        DataResponse: User Data from the DB.
+    """
+    Logger.setLevel(log_lvl.upper())
+    Logger.debug(f"{data=}")
+
+    try:
+        response = DBUsers(log_lvl).get(data)
+        if response['code'] != 200:
+            Logger.warning(f"Could not add new User: {response['msg']}")
+
+        user_data = response['data']
+        Logger.debug(f"{user_data=}")
+
+    except Exception as e:
+        Logger.warning(f"Could not add body to User DB: {e}")
+        return ErrorResponse(msg="Could not add body to User DB")
+
+    return {
+        "msg": "/add_user successful.",
+        "code": 200,
+        "data":  user_data
+    }
+
+@router.post("/add_user", response_model=DataResponse)
+def add_user(data: DBAddUser, log_lvl = "info") -> DataResponse:
+    """ Endpoint for adding a new User to the DB.
+
+    Args:
+        data (DBAddUser): User data including 'name', 'email', 'phone', etc.
+        log_lvl (str, optional): Logger level. Defaults to "info".
+
+    Returns:
+        DataResponse: User Data.
+    """
+    Logger.setLevel(log_lvl.upper())
+    Logger.debug(f"{data=}")
+
+    try:
+        response = DBUsers(log_lvl).add(data)
+        if response['code'] != 200:
+            Logger.warning(f"Could not add new User: {response['msg']}")
+
+        user_data = response['data']
+        Logger.debug(f"{user_data=}")
+
+    except Exception as e:
+        Logger.warning(f"Could not add body to User DB: {e}")
+        return ErrorResponse(msg="Could not add body to User DB")
+
+    return {
+        "msg": "/add_user successful.",
+        "code": 200,
+        "data":  user_data
+    }
+
+@router.post("/delete_user", response_model=DataResponse)
+def get_versions(data: DBDeleteUser, log_lvl = "info") -> DataResponse:
+    """ Endpoint for deleting a User form the DB using 'userID', 'email', or 'phone'.
+
+    Args:
+        data (DBDeleteUser): User Identifiers such as 'userID', 'email', etc.
+        log_lvl (str, optional): Logger level. Defaults to "info".
+
+    Returns:
+        DataResponse: User data removed from the DB.
+    """
+    Logger.setLevel(log_lvl.upper())
+    Logger.debug(f"{data=}")
+
+    try:
+        response = DBUsers(log_lvl).delete(data)
+        if response['code'] != 200:
+            Logger.warning(f"Could not add new User: {response['msg']}")
+
+        user_data = response['data']
+        Logger.debug(f"{user_data=}")
+
+    except Exception as e:
+        Logger.warning(f"Could not add body to User DB: {e}")
+        return ErrorResponse(msg="Could not add body to User DB")
+
+    return {
+        "msg": "/add_user successful.",
+        "code": 200,
+        "data":  user_data
+    }

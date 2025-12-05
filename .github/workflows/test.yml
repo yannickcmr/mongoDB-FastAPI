@@ -1,0 +1,57 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run tests with pytest
+      env:
+        ENVIRONMENT: test
+        API_KEY: test-api-key-${{ github.run_id }}
+        SECRET_KEY: test-secret-key-${{ github.run_id }}
+        PYTHONPATH: ${{ github.workspace }}
+      run: |
+        pytest tests/ --cov=app --cov-report=xml --cov-report=html -v
+    
+    - name: Upload test coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+
+    - name: Run linting
+      run: |
+        pip install pylint
+        # Run pylint with 70% threshold
+        pylint app/ --fail-under=7.0 --disable=W1203,W0105
+    
+    - name: Archive test results
+      if: always()
+      uses: actions/upload-artifact@v4  # Changed from v3 to v4
+      with:
+        name: test-results-${{ matrix.python-version }}-${{ github.run_id }}
+        path: |
+          coverage_html/
+          bandit-report.json

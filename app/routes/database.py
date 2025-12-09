@@ -62,7 +62,7 @@ async def get_user(data: DBGetUser, log_lvl = "info") -> DataResponse | ErrorRes
     return {
         "msg": "/add_user successful.",
         "code": 200,
-        "data":  user_data
+        "data":  user_data.model_dump()
     }
 
 @router.post("/add_user", response_model=DataResponse | ErrorResponse)
@@ -94,7 +94,7 @@ def add_user(data: DBAddUser, log_lvl = "info") -> DataResponse | ErrorResponse:
     return {
         "msg": "/add_user successful.",
         "code": 200,
-        "data":  user_data
+        "data":  user_data.model_dump()
     }
 
 @router.post("/delete_user", response_model=DataResponse | ErrorResponse)
@@ -126,5 +126,5 @@ def delete_user(data: DBDeleteUser, log_lvl = "info") -> DataResponse | ErrorRes
     return {
         "msg": "/delete_user successful.",
         "code": 200,
-        "data":  user_data
+        "data":  user_data.model_dump()
     }

@@ -66,7 +66,7 @@ class DBUsers:
             'code': 200,
             'data': data
         }
-        
+
     def get(self, data: UserRequest) -> UserResponse:
         """ Method to search User by 'userID', 'email' or 'phone' in mongoDB.  """
         Logger.setLevel(self._log_lvl)

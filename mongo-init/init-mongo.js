@@ -7,7 +7,9 @@ db.createCollection("Users");
 db.Users.createIndex({ "userID": 1 }, { unique: true });
 
 db.Users.insertMany([
-  { userID: 1, name: "Alice", email: "alice_weide@gmx.de" }
+  { userID: 1, name: "Alice", email: "alice_kitzler@gmx.de" },
+  { userID: 2, name: "Pablo", email: "pablo.mendez@gmail.com" },
+  { userID: 3, name: "Jänsen", email: "jaensen-freidrich-heinrichson@gmail.com" }
 ]);
 
 print("Database 'Database' initialized with 'Users' collection and unique 'userId' index.");

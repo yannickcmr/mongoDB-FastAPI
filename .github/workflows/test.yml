@@ -13,6 +13,21 @@ jobs:
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
     
+    # Add MongoDB service
+    services:
+      mongodb:
+        image: mongo:6.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: password
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+
     steps:
     - uses: actions/checkout@v3
     
@@ -26,12 +41,27 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
+    # --- NEW STEPS ADDED HERE ---
+    
+    - name: Copy init-mongo.js to workspace (assuming init-mongo.js is in the repo root)
+      run: cp init-mongo.js .
+
+    - name: Initialize MongoDB with init-mongo.js script
+      # Use mongosh to execute the script against the running MongoDB service
+      run: |
+        mongosh mongodb://admin:password@localhost:27017/admin init-mongo.js
+      # This step might fail if the mongo-client tools are not installed in the GitHub runner image by default.
+      # The base 'ubuntu-latest' runner should have these tools available via the default path.
+
+    # --- END OF NEW STEPS ---
+
     - name: Run tests with pytest
       env:
         ENVIRONMENT: test
-        API_KEY: test-api-key-${{ github.run_id }}
-        SECRET_KEY: test-secret-key-${{ github.run_id }}
         PYTHONPATH: ${{ github.workspace }}
+        # The URL uses the credentials defined in the 'services' block
+        MONGODB_URL: mongodb://admin:password@localhost:27017/Database 
+        MONGO_DB_NAME: Database
       run: |
         pytest tests/ --cov=app --cov-report=xml --cov-report=html -v
     
@@ -40,18 +70,17 @@ jobs:
       with:
         file: ./coverage.xml
         fail_ci_if_error: false
-
+    
     - name: Run linting
       run: |
         pip install pylint
-        # Run pylint with 70% threshold
         pylint app/ --fail-under=7.0 --disable=W1203,W0105
     
     - name: Archive test results
       if: always()
-      uses: actions/upload-artifact@v4  # Changed from v3 to v4
+      uses: actions/upload-artifact@v4
       with:
         name: test-results-${{ matrix.python-version }}-${{ github.run_id }}
         path: |
           coverage_html/
-          bandit-report.json
+          coverage.xml

@@ -3,7 +3,7 @@
 from fastapi import APIRouter
 
 from app.config.logging_config import create_logger
-from app.validation.messages import DataResponse, ErrorResponse
+from app.validation.messages import MessageResponse, DataResponse, ErrorResponse
 from app.validation.messages import DBGetUser, DBAddUser, DBDeleteUser
 from app.model.database import DBUsers
 
@@ -17,6 +17,25 @@ Logger.info("=> Logging initialized.")
 """ API """
 
 router = APIRouter(tags=['database'])
+
+@router.get("/check_db", response_model=DataResponse)
+async def check_database(log_lvl: str = "info") -> MessageResponse:
+    try:
+        DBUsers(log_lvl)
+
+        return {
+            'msg': "/check_db success",
+            'code': 200,
+            'data': {
+                "db_": None,
+                "db_": None,
+                "db_": None,
+            }
+        }
+
+    except Exception as e:
+        Logger.warning(f"Could not check DB: {e}")
+        return ErrorResponse(msg="/check_db failed.")
 
 @router.post("/get_user", response_model=DataResponse)
 async def get_user(data: DBGetUser, log_lvl = "info") -> DataResponse:

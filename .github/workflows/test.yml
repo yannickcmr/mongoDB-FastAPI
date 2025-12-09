@@ -41,7 +41,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Initialize MongoDB using Python script
-      run: python init-mongo/initialize_mongo.py
+      run: python mongo-init/initialize_mongo.py
       env:
         MONGODB_URL: mongodb://admin:password@localhost:27017/Database
         MONGO_DB_NAME: Database

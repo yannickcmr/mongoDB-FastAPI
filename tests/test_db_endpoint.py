@@ -44,7 +44,8 @@ class TestDBEndpoint:
             'name': 'Test User',
             'email': 'test@example.com',
             'phone': '1234567890',
-            'birthday': '01.01.2000'
+            'birthday': '01.01.2000',
+            'address': None
         }
         response = client.post("/add_user", json=payload)
         

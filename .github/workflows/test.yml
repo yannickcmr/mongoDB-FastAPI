@@ -39,14 +39,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
-    - name: Initialize MongoDB using a Docker container
+
+    - name: Initialize MongoDB with init-mongo.js script
       run: |
-        docker run --rm \
-        --network host \
-        -v ${{ github.workspace }}/init-mongo.js:/etc/mongo-init/init-mongo.js:ro \
-        mongo:6.0 \
-        mongosh mongodb://admin:password@localhost:27017/admin /etc/mongo-init/init-mongo.js
+        # Use mongosh to execute the script against the running MongoDB service
+        mongosh mongodb://admin:password@localhost:27017/admin init-mongo.js
+    
     
     - name: Copy init-mongo.js to workspace (assuming init-mongo.js is in the repo root)
       run: cp mongo-init/init-mongo.js .

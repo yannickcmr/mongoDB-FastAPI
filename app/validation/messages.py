@@ -14,7 +14,7 @@ class DBAddUser(BaseModel):
     """ BaseModel for adding a new User to the Database. """
     name: str
     email: str
-    phone: Optional[str] = Field(..., min_length=12, max_length=16)
+    phone: Optional[str] = Field(..., min_length=6, max_length=16)
     birthday: Optional[str] = Field(..., description="Use format 'DD-MM-YYYY")
     address: Optional[dict] = Field(..., description="Use pattern: {'street': "", 'city': "", 'postal': "", 'country': ""}")
 

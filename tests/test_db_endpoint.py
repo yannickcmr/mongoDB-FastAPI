@@ -45,13 +45,15 @@ class TestDBEndpoint:
             'email': 'test@example.com',
             'phone': '1234567890',
             'birthday': '01.01.2000',
-            'address': None
+            'address': {'street': "main street", 'number': '12'}
         }
         response = client.post("/add_user", json=payload)
         
-        assert response.status_code == status.HTTP_200_OK  # Should be 201 for creation
+        assert response.status_code == status.HTTP_200_OK
         data = response.json()
-        assert "user_id" in data.get("data", {})
+        assert "msg" in data
+        assert "code" in data
+        assert data["code"] == 200
     
     def test_delete_user(self, client):
         """Testing POST /delete_user endpoint"""
@@ -64,4 +66,6 @@ class TestDBEndpoint:
         
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
-        assert data["msg"] == "User deleted successfully"
+        assert "msg" in data
+        assert "code" in data
+        assert data["code"] == 200

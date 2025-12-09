@@ -33,7 +33,7 @@ async def check_database(log_lvl: str = "info") -> MessageResponse | ErrorRespon
         Logger.warning(f"Could not check DB: {e}")
         return ErrorResponse(msg="/check_db failed.")
 
-@router.post("/get_user", response_model=[DataResponse, ErrorResponse])
+@router.post("/get_user", response_model=DataResponse | ErrorResponse)
 async def get_user(data: DBGetUser, log_lvl = "info") -> DataResponse | ErrorResponse:
     """ Endpoint for gathering User data from the DB.
 
@@ -65,7 +65,7 @@ async def get_user(data: DBGetUser, log_lvl = "info") -> DataResponse | ErrorRes
         "data":  user_data
     }
 
-@router.post("/add_user", response_model=[DataResponse, ErrorResponse])
+@router.post("/add_user", response_model=DataResponse | ErrorResponse)
 def add_user(data: DBAddUser, log_lvl = "info") -> DataResponse | ErrorResponse:
     """ Endpoint for adding a new User to the DB.
 
@@ -97,8 +97,8 @@ def add_user(data: DBAddUser, log_lvl = "info") -> DataResponse | ErrorResponse:
         "data":  user_data
     }
 
-@router.post("/delete_user", response_model=[DataResponse, ErrorResponse])
-def get_versions(data: DBDeleteUser, log_lvl = "info") -> DataResponse | ErrorResponse:
+@router.post("/delete_user", response_model=DataResponse | ErrorResponse)
+def delete_user(data: DBDeleteUser, log_lvl = "info") -> DataResponse | ErrorResponse:
     """ Endpoint for deleting a User form the DB using 'userID', 'email', or 'phone'.
 
     Args:
@@ -124,7 +124,7 @@ def get_versions(data: DBDeleteUser, log_lvl = "info") -> DataResponse | ErrorRe
         return ErrorResponse(msg="Could not add body to User DB")
 
     return {
-        "msg": "/add_user successful.",
+        "msg": "/delete_user successful.",
         "code": 200,
         "data":  user_data
     }

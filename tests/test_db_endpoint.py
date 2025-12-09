@@ -13,6 +13,16 @@ def client():
 
 class TestDBEndpoint:
     """Unit Test for DB Endpoint"""
+    def test_check_db(self, client):
+        """Testing GET /check_db endpoint"""
+        response = client.get("/check_db")
+
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert "msg" in data
+        assert "code" in data
+        assert data["code"] == 200
+
     def test_get_user(self, client):
         """Testing POST /get_user endpoint"""
         payload = {

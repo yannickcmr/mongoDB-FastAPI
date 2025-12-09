@@ -18,19 +18,15 @@ Logger.info("=> Logging initialized.")
 
 router = APIRouter(tags=['database'])
 
-@router.get("/check_db", response_model=DataResponse)
+@router.get("/check_db", response_model=MessageResponse)
 async def check_database(log_lvl: str = "info") -> MessageResponse:
     try:
         DBUsers(log_lvl)
 
         return {
-            'msg': "/check_db success",
+            'msg': "/check_db success.",
             'code': 200,
-            'data': {
-                "db_": None,
-                "db_": None,
-                "db_": None,
-            }
+            'data': None
         }
 
     except Exception as e:

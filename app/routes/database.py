@@ -19,7 +19,7 @@ Logger.info("=> Logging initialized.")
 router = APIRouter(tags=['database'])
 
 @router.get("/check_db", response_model=MessageResponse)
-async def check_database(log_lvl: str = "info") -> MessageResponse:
+async def check_database(log_lvl: str = "info") -> MessageResponse | ErrorResponse:
     try:
         Logger.info(f"{DBUsers(log_lvl)=}")
 
@@ -33,8 +33,8 @@ async def check_database(log_lvl: str = "info") -> MessageResponse:
         Logger.warning(f"Could not check DB: {e}")
         return ErrorResponse(msg="/check_db failed.")
 
-@router.post("/get_user", response_model=DataResponse)
-async def get_user(data: DBGetUser, log_lvl = "info") -> DataResponse:
+@router.post("/get_user", response_model=[DataResponse, ErrorResponse])
+async def get_user(data: DBGetUser, log_lvl = "info") -> DataResponse | ErrorResponse:
     """ Endpoint for gathering User data from the DB.
 
     Args:
@@ -65,8 +65,8 @@ async def get_user(data: DBGetUser, log_lvl = "info") -> DataResponse:
         "data":  user_data
     }
 
-@router.post("/add_user", response_model=DataResponse)
-def add_user(data: DBAddUser, log_lvl = "info") -> DataResponse:
+@router.post("/add_user", response_model=[DataResponse, ErrorResponse])
+def add_user(data: DBAddUser, log_lvl = "info") -> DataResponse | ErrorResponse:
     """ Endpoint for adding a new User to the DB.
 
     Args:
@@ -97,8 +97,8 @@ def add_user(data: DBAddUser, log_lvl = "info") -> DataResponse:
         "data":  user_data
     }
 
-@router.post("/delete_user", response_model=DataResponse)
-def get_versions(data: DBDeleteUser, log_lvl = "info") -> DataResponse:
+@router.post("/delete_user", response_model=[DataResponse, ErrorResponse])
+def get_versions(data: DBDeleteUser, log_lvl = "info") -> DataResponse | ErrorResponse:
     """ Endpoint for deleting a User form the DB using 'userID', 'email', or 'phone'.
 
     Args:

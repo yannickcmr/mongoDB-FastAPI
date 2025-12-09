@@ -39,28 +39,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
-    - name: Install MongoDB Shell (mongosh)
+    
+    - name: Initialize MongoDB using a temporary Docker container
       run: |
-        # Ensure curl is installed
-        sudo apt-get update
-        sudo apt-get install -y curl gnupg
-
-        # Import the MongoDB public GPG key into a new keyring file
-        curl -fsSL pgp.mongodb.com | \
-        sudo gpg --dearmor -o /usr/share/keyrings/mongodb-archive-keyring.gpg
-
-        # Add the MongoDB repository source list using the new keyring file
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/mongodb-archive-keyring.gpg] repo.mongodb.org noble/mongodb-org/6.0 multiverse" | \
-        sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-
-        # Update apt-get lists and install mongosh specifically
-        sudo apt-get update
-        sudo apt-get install -y mongodb-mongosh
-
-    - name: Initialize MongoDB with init-mongo.js script
-      run: |
-        mongosh mongodb://admin:password@localhost:27017/admin init-mongo.js
+        docker run --rm \
+        --network host \
+        -v ${{ github.workspace }}/init-mongo.js:/etc/mongo-init/init-mongo.js:ro \
+        mongo:6.0 \
+        mongosh mongodb://admin:password@localhost:27017/admin /etc/mongo-init/init-mongo.js
 
     - name: Run tests with pytest
       env:

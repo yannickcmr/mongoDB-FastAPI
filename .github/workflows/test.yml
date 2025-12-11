@@ -52,7 +52,6 @@ jobs:
         PYTHONPATH: ${{ github.workspace }}
         MONGODB_URL: mongodb://admin:password@mongodb:27017/Database 
         MONGO_DB_NAME: Database
-        MONGO_DB_NAME: Database
       run: |
         pytest tests/ --cov=app --cov-report=xml --cov-report=html -v
     

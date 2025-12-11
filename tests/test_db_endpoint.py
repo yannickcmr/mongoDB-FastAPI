@@ -36,6 +36,7 @@ class TestDBEndpoint:
         data = response.json()
         assert "msg" in data
         assert "code" in data
+        assert "data" in data
         assert data["code"] == 200
     
     def test_add_user(self, client):
@@ -53,6 +54,7 @@ class TestDBEndpoint:
         data = response.json()
         assert "msg" in data
         assert "code" in data
+        assert "data" in data
         assert data["code"] == 200
     
     def test_delete_user(self, client):

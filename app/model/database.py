@@ -59,7 +59,7 @@ class DBUsers:
             Logger.debug(f"{data=}")
 
         except Exception as e:
-            Logger.warning(f"Cloud not find User: {e}")
+            Logger.warning(f"Could not find User: {e}")
 
         return {
             'msg': "get_id success.",
@@ -120,13 +120,18 @@ class DBUsers:
             user_body = {k: v for k, v in user_body.items() if v is not None}
             Logger.debug(f"{user_body=}")
 
+            if len(user_body) == 0:
+                raise ValueError("Empty user Body.")
+
         except Exception as e:
-            Logger.warning(f"Cloud not create User body: {e}")
+            Logger.warning(f"Could not create User body: {e}")
 
         # adding to User database.
         try:
             response = self.db.insert_one(user_body)
+            Logger.warning(f"{response=}")
             data = self.get_id(response.inserted_id)
+            Logger.warning(f"{data=}")
             if data['code'] != 200:
                 Logger.warning(f"Could not add User to DB: {data['msg']}")
 
@@ -134,8 +139,8 @@ class DBUsers:
             Logger.debug(f"{user=}")
 
         except Exception as e:
-            Logger.warning(f"Cloud not add User to DB: {e}")
-        
+            Logger.warning(f"Could not add User to DB: {e}")
+
         return {
             "msg": "Success",
             "code": 200,

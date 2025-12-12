@@ -3,7 +3,7 @@ import os
 import pymongo
 
 def init_mongo_db():
-    MONGO_URL = os.getenv("MONGODB_URL", "mongodb://admin:password@localhost:27017/Database")
+    MONGO_URL = os.getenv("MONGODB_URL", "mongodb://admin:password@localhost:27017")
     DB_NAME = os.getenv("MONGO_DB_NAME", "Database")
     
     for i in range(5):

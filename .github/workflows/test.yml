@@ -43,14 +43,32 @@ jobs:
     - name: Initialize MongoDB using Python script
       run: python mongo-init/initialize_mongo.py
       env:
-        MONGODB_URL: mongodb://admin:password@localhost:27017/Database
+        MONGODB_URL: mongodb://admin:password@localhost:27017
         MONGO_DB_NAME: Database
+    
+    - name: Debug environment variables
+      run: |
+        echo "MONGODB_URL in workflow: $MONGODB_URL"
+        echo "Testing connection to MongoDB..."
+        python -c "
+        import os
+        print('Python sees MONGODB_URL:', os.getenv('MONGODB_URL'))
+        print('Python sees MONGODB_DB_NAME:', os.getenv('MONGO_DB_NAME'))
+        # Try to connect
+        from pymongo import MongoClient
+        try:
+            client = MongoClient(os.getenv('MONGODB_URL', 'mongodb://admin:password@localhost:27017'))
+            print('Connection successful!')
+            client.close()
+        except Exception as e:
+            print('Connection failed:', e)
+        "
 
     - name: Run tests with pytest
       env:
         ENVIRONMENT: test
         PYTHONPATH: ${{ github.workspace }}
-        MONGODB_URL: mongodb://admin:password@localhost:27017/Database 
+        MONGODB_URL: mongodb://admin:password@localhost:27017 
         MONGO_DB_NAME: Database
       run: |
         pytest tests/ --cov=app --cov-report=xml --cov-report=html -v

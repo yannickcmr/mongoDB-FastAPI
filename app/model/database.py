@@ -44,8 +44,6 @@ class DBUsers:
             self.db = db_connect('Users')
             if self.db is None:
                 raise ConnectionError("Could not connect to User DB.")
-
-            self.db.server_info()
         
         except Exception as e:
             raise ConnectionError(f"Could not initialize DB Connection: {e}")

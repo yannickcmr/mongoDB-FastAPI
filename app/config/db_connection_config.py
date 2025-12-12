@@ -37,6 +37,9 @@ def db_connect(name: str) -> pymongo.MongoClient:
             authSource="admin",
             timeoutMS=1000
         )
+
+        session.server_info()
+
         collection = session[db_name][name]
         print(f"==> Connected to Collection: {collection}")
 

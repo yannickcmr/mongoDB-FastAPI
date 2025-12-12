@@ -18,7 +18,7 @@ def db_connect(name: str) -> pymongo.MongoClient:
     # loading .env file variables.
     try:
         load_dotenv()
-        db_host = os.environ.get("DB_HOST", default="mongodb:27017")
+        db_host = os.environ.get("DB_HOST", default="localhost:27017")
         db_name = os.environ.get("DB_NAME", default="Database")
         db_user = os.environ.get("DB_USER", default="admin")
         db_password = os.environ.get("DB_PASSWORD", default="password")

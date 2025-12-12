@@ -40,9 +40,15 @@ class DBUsers:
         """ Method for initialization of the class """
         self._log_lvl = log_lvl.upper()
 
-        self.db = db_connect('Users')
-        if self.db is None:
-            raise ConnectionError("Could not connect to User DB.")
+        try:
+            self.db = db_connect('Users')
+            if self.db is None:
+                raise ConnectionError("Could not connect to User DB.")
+
+            self.db.server_info()
+        
+        except Exception as e:
+            raise ConnectionError(f"Could not initialize DB Connection: {e}")
 
     def get_id(self, new_id) -> UserResponse:
         """ Method for searching User by '_id' in mongoDB """
@@ -129,9 +135,7 @@ class DBUsers:
         # adding to User database.
         try:
             response = self.db.insert_one(user_body)
-            Logger.warning(f"{response=}")
             data = self.get_id(response.inserted_id)
-            Logger.warning(f"{data=}")
             if data['code'] != 200:
                 Logger.warning(f"Could not add User to DB: {data['msg']}")
 

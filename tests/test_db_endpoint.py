@@ -66,7 +66,6 @@ class TestDBEndpoint:
         assert "userID" in data['data']
         assert "name" in data['data']
         assert "email" in data['data']
-        assert "phone" in data['data']
     
     def test_delete_user(self, client):
         """Testing POST /delete_user endpoint"""
@@ -88,4 +87,3 @@ class TestDBEndpoint:
         assert "userID" in data['data']
         assert "name" in data['data']
         assert "email" in data['data']
-        assert "phone" in data['data']

@@ -1,68 +1,52 @@
 stages:
-  - lint
   - test
 
 variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  MONGODB_URL: "mongodb://admin:password@mongodb:27017/admin"
+  MONGODB_URL: "mongodb://admin:password@localhost:27017"
   MONGO_DB_NAME: "Database"
+  ENVIRONMENT: "test"
+  PYTHONPATH: "${CI_PROJECT_DIR}"
 
-cache:
-  paths:
-    - .cache/pip
-    - venv/
-
-# MongoDB service for GitLab
-services:
-  - name: mongo:6.0
-    alias: mongodb
-    variables:
-      MONGO_INITDB_ROOT_USERNAME: "admin"
-      MONGO_INITDB_ROOT_PASSWORD: "password"
-
-test:
+.test-template: &test-template
   stage: test
-  image: python:3.11-slim
+  image: python:${PYTHON_VERSION}
+  services:
+    - name: mongo:6.0
+      alias: mongodb
+      variables:
+        MONGO_INITDB_ROOT_USERNAME: admin
+        MONGO_INITDB_ROOT_PASSWORD: password
   before_script:
-    - python -m venv venv
-    - source venv/bin/activate
-    - pip install --upgrade pip
+    - python -m pip install --upgrade pip
     - pip install -r requirements.txt
-
-    - pip install pymongo
-    - python -c "
-        import pymongo, time, os
-        for i in range(30):
-            try:
-                client = pymongo.MongoClient(os.getenv('MONGODB_URL'), serverSelectionTimeoutMS=2000)
-                client.admin.command('ping')
-                print('✅ MongoDB is ready')
-                break
-            except Exception:
-                if i == 29:
-                    raise
-                time.sleep(1)
-        "
   script:
+    - echo "MONGODB_URL: $MONGODB_URL"
+    - echo "MONGO_DB_NAME: $MONGO_DB_NAME"
+    - echo "Testing connection..."
+    - python mongo-init/initialize_mongo.py
     - pytest tests/ --cov=app --cov-report=xml --cov-report=html -v
-  coverage: '/TOTAL.*\s+(\d+%)$/'
+    - pip install pylint
+    - pylint app/ --fail-under=7.0 --disable=W1203,W0105
+  after_script:
+    - echo "Cleaning up..."
   artifacts:
     paths:
       - coverage_html/
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
+      - coverage.xml
     when: always
+    name: "test-results-python-$PYTHON_VERSION"
   only:
-    - merge_requests
-    - main
-    - develop
+    refs:
+      - main
+      - master
+      - merge_requests
 
-lint:
-  stage: lint
-  image: python:3.11-slim
-  script:
-    - pip install pylint
-    - pylint app/ --fail-under=7.0 --disable=W1203,W0105
-  allow_failure: true
+test-python-3.10:
+  <<: *test-template
+  variables:
+    PYTHON_VERSION: "3.10"
+
+test-python-3.11:
+  <<: *test-template
+  variables:
+    PYTHON_VERSION: "3.11"

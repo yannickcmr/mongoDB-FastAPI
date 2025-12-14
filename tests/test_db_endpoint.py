@@ -35,9 +35,14 @@ class TestDBEndpoint:
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
         assert "msg" in data
+
         assert "code" in data
-        assert "data" in data
         assert data["code"] == 200
+
+        assert "data" in data
+        assert 'userID' in data["data"]
+        assert 'name' in data["data"]
+        assert 'email' in data["data"]
     
     def test_add_user(self, client):
         """Testing POST /add_user endpoint"""
@@ -53,9 +58,15 @@ class TestDBEndpoint:
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
         assert "msg" in data
+
         assert "code" in data
-        assert "data" in data
         assert data["code"] == 200
+
+        assert "data" in data
+        assert "userID" in data['data']
+        assert "name" in data['data']
+        assert "email" in data['data']
+        assert "phone" in data['data']
     
     def test_delete_user(self, client):
         """Testing POST /delete_user endpoint"""
@@ -69,5 +80,12 @@ class TestDBEndpoint:
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
         assert "msg" in data
+
         assert "code" in data
         assert data["code"] == 200
+
+        assert "data" in data
+        assert "userID" in data['data']
+        assert "name" in data['data']
+        assert "email" in data['data']
+        assert "phone" in data['data']

@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes import health, database
-from app.config.documentation import DESCRIPTION
+from app.config.documentation import DESCRIPTION, APP_VERSION
 from app.config.logging_config import create_logger
 
 
@@ -26,7 +26,7 @@ Logger.info("=> Thread Pool established.")
 
 app = FastAPI(
     title="mongoDB+FastAPI",
-    version="0.6.9",
+    version=APP_VERSION,
     contact={
         "name": "Yannick Ciomer",
         "email": ""

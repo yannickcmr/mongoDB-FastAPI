@@ -18,7 +18,7 @@ Logger.info("=> Logging initialized.")
 
 router = APIRouter(tags=['database'])
 
-@router.get("/check_db", response_model=MessageResponse)
+@router.get("/check_db", response_model=MessageResponse | ErrorResponse)
 async def check_database(log_lvl: str = "info") -> MessageResponse | ErrorResponse:
     try:
         Logger.info(f"{DBUsers(log_lvl)=}")

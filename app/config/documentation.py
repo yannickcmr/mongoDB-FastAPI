@@ -1,5 +1,6 @@
 """ File containing the FastAPI Description. """
 
+APP_VERSION = "0.6.9"
 DESCRIPTION = """ 
 ## mongoDB + FastAPI Example for Users
 

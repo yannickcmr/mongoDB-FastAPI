@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from app.config.logging_config import create_logger
 from app.validation.messages import MessageResponse
+from app.config.documentation import APP_VERSION
 
 
 """ Logging Function """
@@ -51,12 +52,12 @@ def get_versions(log_lvl = "info") -> MessageResponse:
         dict: Dict containing code, msg and all current versions.
     """
     Logger.setLevel(log_lvl.upper())
-    Logger.info(f"App Version [{router.version}]")
+    Logger.info(f"App Version [{APP_VERSION}]")
 
     return {
         'msg': "/version success.",
         'code': 200,
         'data': {
-            'version': router.version
+            'version': APP_VERSION
         }
     }

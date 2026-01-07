@@ -1,4 +1,4 @@
-""" Controller API for communication throughout the application """
+""" Database API Endpoints for MongoDB operations """
 
 from fastapi import APIRouter
 

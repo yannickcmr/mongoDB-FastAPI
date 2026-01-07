@@ -1,4 +1,4 @@
-""" Controller API for communication throughout the application """
+""" Health API for communication throughout the application """
 
 from fastapi import APIRouter
 
